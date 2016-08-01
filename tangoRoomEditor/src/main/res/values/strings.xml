@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">My Application</string>
+
+    <string name="exception_out_of_date">"Tango service outdated!"</string>
+    <string name="failed_measurement">Failed to fit plane</string>
+    <string name="failed_permissions">Permissions required!</string>
+</resources>

@@ -1,0 +1,57 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.0-alpha6'
+        classpath 'com.google.gms:google-services:3.0.0'
+
+        // Retrolambda Support
+        classpath 'me.tatarka:gradle-retrolambda:3.2.5'
+        classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
+
+        // Better Dagger Support
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        jcenter()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+ext {
+    // version numbers for dependencies                 // source for most recent release
+    supportLibraryVersion = '24.0.0'                    // See standalone SDK manager
+    guavaVersion = '19.0'                               // https://github.com/google/guava/releases
+
+    commonsIOVersion = '2.5'                            // https://commons.apache.org/proper/commons-io/
+    commonsLangVersion = '3.4'                          // https://commons.apache.org/proper/commons-lang/
+
+    daggerVersion = '2.5'                               // https://github.com/google/dagger/blob/master/CHANGELOG.md
+    okhttpVersion = '3.3.1'                             // https://github.com/square/okhttp/blob/master/CHANGELOG.md
+    retrofitVersion='2.1.0'                             // https://github.com/square/retrofit/blob/master/CHANGELOG.md
+    picassoVersion='2.5.2'                              // https://github.com/square/picasso/blob/master/CHANGELOG.md
+    picassoOkHttpDownloaderVersion = '1.0.2'            // https://github.com/JakeWharton/picasso2-okhttp3-downloader/blob/master/CHANGELOG.md
+    butterKnifeVersion='8.1.0'                          // https://github.com/JakeWharton/butterknife/blob/master/CHANGELOG.md
+
+    autoValueVersion='1.2'                              // https://github.com/google/auto
+    autoValueGsonVersion='0.3.1'                        // https://github.com/rharter/auto-value-gson/blob/master/CHANGELOG.md
+
+    rxJavaVersion='1.1.6'                               // https://github.com/ReactiveX/RxJava/blob/1.x/CHANGES.md
+    rxAndroidVersion='1.2.1'                            // https://github.com/ReactiveX/RxAndroid/blob/master/CHANGES.md
+    rxBindingVersion='0.4.0'                            // https://github.com/JakeWharton/RxBinding/blob/master/CHANGELOG.md
+
+}

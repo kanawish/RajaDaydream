@@ -1,0 +1,53 @@
+apply plugin: 'com.android.library'
+apply plugin: 'me.tatarka.retrolambda'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0 rc4"
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    // NOTE: commonLib dependencies are for 'framework' type dependencies I always want in my projects.
+
+    // Timber Logging API: Better method signatures, easy log-level-by-flavor management, decent lint checks, etc.
+    // https://github.com/JakeWharton/timber
+    compile 'com.jakewharton.timber:timber:4.1.2'
+
+    // RxJava
+    compile "io.reactivex:rxjava:$project.rxJavaVersion"
+    // Android Extensions - https://github.com/ReactiveX/RxAndroid/wiki
+    compile "io.reactivex:rxandroid:$project.rxAndroidVersion"
+    compile "com.jakewharton.rxrelay:rxrelay:1.1.0"
+    compile "com.jakewharton.rxbinding:rxbinding:$project.rxBindingVersion"
+    compile "com.jakewharton.rxbinding:rxbinding-support-v4:$project.rxBindingVersion"
+    compile "com.jakewharton.rxbinding:rxbinding-appcompat-v7:$project.rxBindingVersion"
+//    compile 'com.jakewharton.rxbinding:rxbinding-design:0.4.0'
+//    compile 'com.jakewharton.rxbinding:rxbinding-recyclerview-v7:0.4.0'
+
+    // Square Networking
+    compile "com.squareup.okhttp3:okhttp:$project.okhttpVersion"
+    compile "com.squareup.okhttp3:logging-interceptor:$project.okhttpVersion"
+    compile "com.squareup.okhttp3:okhttp-urlconnection:$project.okhttpVersion"
+//    compile "com.squareup.picasso:picasso:$project.picassoVersion"
+    compile "com.jakewharton.picasso:picasso2-okhttp3-downloader:$project.picassoOkHttpDownloaderVersion"
+    compile "com.squareup.retrofit2:retrofit:$project.retrofitVersion"
+    compile "com.squareup.retrofit2:adapter-rxjava:$project.retrofitVersion"
+    compile "com.squareup.retrofit2:converter-gson:$project.retrofitVersion"
+
+}

@@ -1,0 +1,88 @@
+/*
+ * Copyright 2015 Google Inc. All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'me.tatarka.retrolambda'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.0 rc4"
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId "com.kanawish.raja.vr"
+        minSdkVersion 19
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        debug {
+            minifyEnabled true
+            // Uses new built-in shrinker http://tools.android.com/tech-docs/new-build-system/built-in-shrinker
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard-rules.pro'
+        }
+        release {
+            minifyEnabled true
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), '../proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile project(':gvrLibs:audio')
+    compile project(':gvrLibs:base')
+    compile project(':gvrLibs:common')
+
+    compile project(':commonLib')
+
+    // NOTE: Latest Rajawali lib version introduces issues in the sample code, we use an older one for now.
+    compile 'org.rajawali3d:rajawali:1.0.325@aar'
+//    compile 'org.rajawali3d:rajawali:1.1.517-SNAPSHOT@aar'
+
+    // NOTE: Below are a typical list of dependencies found in medium/large projects:
+
+    // Timber Logging API: Better method signatures, easy log-level-by-flavor management, decent lint checks, etc.
+    // https://github.com/JakeWharton/timber
+    compile 'com.jakewharton.timber:timber:4.1.2'
+
+    // RxJava
+    compile "io.reactivex:rxjava:$project.rxJavaVersion"
+    // Android Extensions - https://github.com/ReactiveX/RxAndroid/wiki
+    compile "io.reactivex:rxandroid:$project.rxAndroidVersion"
+    compile "com.jakewharton.rxrelay:rxrelay:1.1.0"
+    compile "com.jakewharton.rxbinding:rxbinding:$project.rxBindingVersion"
+    compile "com.jakewharton.rxbinding:rxbinding-support-v4:$project.rxBindingVersion"
+    compile "com.jakewharton.rxbinding:rxbinding-appcompat-v7:$project.rxBindingVersion"
+//    compile 'com.jakewharton.rxbinding:rxbinding-design:0.4.0'
+//    compile 'com.jakewharton.rxbinding:rxbinding-recyclerview-v7:0.4.0'
+
+    // Square Networking
+    compile "com.squareup.okhttp3:okhttp:$project.okhttpVersion"
+    compile "com.squareup.okhttp3:logging-interceptor:$project.okhttpVersion"
+    compile "com.squareup.okhttp3:okhttp-urlconnection:$project.okhttpVersion"
+//    compile "com.squareup.picasso:picasso:$project.picassoVersion"
+    compile "com.jakewharton.picasso:picasso2-okhttp3-downloader:$project.picassoOkHttpDownloaderVersion"
+    compile "com.squareup.retrofit2:retrofit:$project.retrofitVersion"
+    compile "com.squareup.retrofit2:adapter-rxjava:$project.retrofitVersion"
+    compile "com.squareup.retrofit2:converter-gson:$project.retrofitVersion"
+
+}
