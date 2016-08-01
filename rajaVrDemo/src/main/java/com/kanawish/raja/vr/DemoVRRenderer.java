@@ -3,6 +3,7 @@ package com.kanawish.raja.vr;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.view.MotionEvent;
 
 import org.rajawali3d.Object3D;
 import org.rajawali3d.animation.Animation;
@@ -23,7 +24,7 @@ import org.rajawali3d.vr.renderer.RajaStereoRenderer;
 
 public final class DemoVRRenderer extends RajaStereoRenderer {
 
-    private DirectionalLight mDirectionalLight;
+    private DirectionalLight directionalLight;
 
     public DemoVRRenderer(Context context) {
         super(context);
@@ -75,7 +76,7 @@ public final class DemoVRRenderer extends RajaStereoRenderer {
 
     private Object3D buildOBJ() {
         Object3D o;
-        LoaderOBJ objParser = new LoaderOBJ(mContext.getResources(), mTextureManager, R.raw.demo_1_obj);
+        LoaderOBJ objParser = new LoaderOBJ(mContext.getResources(), getTextureManager(), R.raw.demo_1_obj);
         try {
             objParser.parse();
         } catch (ParsingException e) {
@@ -136,4 +137,8 @@ public final class DemoVRRenderer extends RajaStereoRenderer {
         return material;
     }
 
+    @Override
+    public void onTouchEvent(MotionEvent event) {
+        // Nothing to do.
+    }
 }
