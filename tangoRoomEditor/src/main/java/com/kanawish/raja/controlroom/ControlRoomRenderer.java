@@ -45,7 +45,7 @@ import org.rajawali3d.primitives.Cube;
 import org.rajawali3d.primitives.Plane;
 import org.rajawali3d.primitives.ScreenQuad;
 import org.rajawali3d.primitives.Sphere;
-import org.rajawali3d.renderer.RajawaliRenderer;
+import org.rajawali3d.renderer.Renderer;
 
 import javax.microedition.khronos.opengles.GL10;
 
@@ -54,7 +54,7 @@ import javax.microedition.khronos.opengles.GL10;
  * The position of the cube in the OpenGL world is updated using the {@code updateObjectPose}
  * method.
  */
-public class ControlRoomRenderer extends RajawaliRenderer {
+public class ControlRoomRenderer extends Renderer {
 
     private static final String TAG = ControlRoomRenderer.class.getSimpleName();
 
@@ -81,6 +81,7 @@ public class ControlRoomRenderer extends RajawaliRenderer {
         // Create a quad covering the whole background and assign a texture to it where the
         // Tango color camera contents will be rendered.
         ScreenQuad backgroundQuad = new ScreenQuad();
+        backgroundQuad.setDoubleSided(true);
         Material tangoCameraMaterial = new Material();
         tangoCameraMaterial.setColorInfluence(0);
 
@@ -95,6 +96,7 @@ public class ControlRoomRenderer extends RajawaliRenderer {
             Log.e(TAG, "Exception creating texture for RGB camera contents", e);
         }
         getCurrentScene().addChildAt(backgroundQuad, 0);
+        backgroundQuad.rotate(Vector3.Axis.X,180);
 
         // Add a directional light in an arbitrary direction.
         DirectionalLight light = new DirectionalLight(1, -0.5, -1);
@@ -115,7 +117,7 @@ public class ControlRoomRenderer extends RajawaliRenderer {
         getCurrentScene().addChild(cube);
 
         // Set-up a material
-        Material sphereMaterial = buildMaterial(Color.GREEN);
+        Material sphereMaterial = buildMaterial(Color.BLUE);
 
         // Build a Sphere
         sphere = new Sphere(0.25f,20,20);
@@ -164,11 +166,6 @@ public class ControlRoomRenderer extends RajawaliRenderer {
         // Synchronize against concurrent access with the setter below.
         synchronized (this) {
             if (objectPoseUpdated) {
-                sphere.setPosition(objectTransform.getTranslation());
-                sphere.setOrientation(new Quaternion().fromMatrix(objectTransform).conjugate());
-                sphere.moveForward(0.25f);
-                sphere.setVisible(true);
-
                 // Place the 3D object in the location of the detected plane.
                 switch ( currentFurniture ) {
                     case PLANE:
@@ -224,6 +221,7 @@ public class ControlRoomRenderer extends RajawaliRenderer {
 
         getCurrentCamera().setPosition(translation[0], translation[1], translation[2]);
         Quaternion quaternion = new Quaternion(rotation[3], rotation[0], rotation[1], rotation[2]);
+//        getCurrentCamera().setRotation(quaternion.conjugate());
         getCurrentCamera().setRotation(quaternion.conjugate());
     }
 
@@ -251,7 +249,7 @@ public class ControlRoomRenderer extends RajawaliRenderer {
     }
 
     /**
-     * Sets the projection matrix for the scen camera to match the parameters of the color camera,
+     * Sets the projection matrix for the scene camera to match the parameters of the color camera,
      * provided by the {@code TangoCameraIntrinsics}.
      */
     public void setProjectionMatrix(TangoCameraIntrinsics intrinsics) {

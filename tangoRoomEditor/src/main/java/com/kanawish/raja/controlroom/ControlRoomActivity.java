@@ -24,7 +24,7 @@ import com.projecttango.tangosupport.TangoPointCloudManager;
 import com.projecttango.tangosupport.TangoSupport;
 
 import org.rajawali3d.scene.ASceneFrameCallback;
-import org.rajawali3d.surface.RajawaliSurfaceView;
+import org.rajawali3d.view.SurfaceView;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +59,7 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
 
     private TextView logTextView;
 
-    private RajawaliSurfaceView surfaceView;
+    private SurfaceView surfaceView;
     private ControlRoomRenderer renderer;
 
     private Subscription logSubscription;
@@ -70,7 +70,7 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
 
         setContentView(R.layout.activity_main);
         logTextView = (TextView) findViewById(R.id.log_text);
-        surfaceView = new RajawaliSurfaceView(this);
+        surfaceView = new SurfaceView(this);
 //        surfaceView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
         renderer = new ControlRoomRenderer(this);
         surfaceView.setSurfaceRenderer(renderer);
@@ -229,8 +229,7 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
                     // NOTE: When the OpenGL context is recycled, Rajawali may re-generate the
                     // texture with a different ID.
                     if (connectedTextureIdGlThread != renderer.getTextureId()) {
-                        tango.connectTextureId(TangoCameraIntrinsics.TANGO_CAMERA_COLOR,
-                            renderer.getTextureId());
+                        tango.connectTextureId(TangoCameraIntrinsics.TANGO_CAMERA_COLOR, renderer.getTextureId());
                         connectedTextureIdGlThread = renderer.getTextureId();
                         Log.d(TAG, "connected to texture id: " + renderer.getTextureId());
                     }

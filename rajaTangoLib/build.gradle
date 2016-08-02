@@ -38,8 +38,8 @@ dependencies {
     compile project(':commonLib')
 
     // NOTE: Latest Rajawali lib version introduces issues in the sample code, we use an older one for now.
-    compile 'org.rajawali3d:rajawali:1.0.325@aar'
-//    compile 'org.rajawali3d:rajawali:1.1.517-SNAPSHOT@aar'
+//    compile 'org.rajawali3d:rajawali:1.0.325@aar'
+    compile 'org.rajawali3d:rajawali:1.1.517-SNAPSHOT@aar'
 
 
 }
