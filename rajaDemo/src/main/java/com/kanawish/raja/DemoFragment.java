@@ -1,4 +1,4 @@
-package com.kanawish.tangotalk.rajademo;
+package com.kanawish.raja;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,7 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+
+import com.kanawish.raja.rajademo.R;
 
 import org.rajawali3d.Object3D;
 import org.rajawali3d.animation.Animation;
@@ -28,35 +29,27 @@ import org.rajawali3d.math.vector.Vector3;
 import org.rajawali3d.postprocessing.PostProcessingManager;
 import org.rajawali3d.postprocessing.effects.BloomEffect;
 import org.rajawali3d.postprocessing.passes.BlendPass;
-import org.rajawali3d.postprocessing.passes.RenderPass;
 
-public class DemoFragment extends AExampleFragment {
+public class DemoFragment extends BaselineRenderingFragment {
 
     private PostProcessingManager effectsManager;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        LinearLayout ll = new LinearLayout(getActivity());
-        ll.setOrientation(LinearLayout.VERTICAL);
-        ll.setGravity(Gravity.BOTTOM);
+        LinearLayout uiOverlay = new LinearLayout(getActivity());
+        uiOverlay.setOrientation(LinearLayout.VERTICAL);
+        uiOverlay.setGravity(Gravity.BOTTOM);
 
-        TextView label = new TextView(getActivity());
-        label.setText(R.string.fbx_fragment_button_model_by);
-        label.setTextSize(20);
-        label.setGravity(Gravity.CENTER);
-        label.setHeight(100);
-        ll.addView(label);
+        // TODO: Add ui elements here.
+        layout.addView(uiOverlay);
 
-        mLayout.addView(ll);
-
-        return mLayout;
+        return layout;
     }
 
     @Override
-    public AExampleRenderer createRenderer() {
+    public BaselineRenderer createRenderer() {
         return new FBXRenderer(getActivity(), this);
     }
 
@@ -64,11 +57,9 @@ public class DemoFragment extends AExampleFragment {
         return new DemoFragment();
     }
 
-    private final class FBXRenderer extends AExampleRenderer {
+    private final class FBXRenderer extends BaselineRenderer {
 
-        private DirectionalLight mDirectionalLight;
-
-        public FBXRenderer(Context context, @Nullable AExampleFragment fragment) {
+        public FBXRenderer(Context context, @Nullable BaselineRenderingFragment fragment) {
             super(context, fragment);
         }
 
@@ -81,6 +72,7 @@ public class DemoFragment extends AExampleFragment {
 
             // For skybox below.
             getCurrentCamera().setFarPlane(1000);
+
              // Skybox images by Emil Persson, aka Humus. http://www.humus.name humus@comhem.se
             try {
                 getCurrentScene().setSkybox(R.drawable.posx, R.drawable.negx,
@@ -91,38 +83,36 @@ public class DemoFragment extends AExampleFragment {
 
             getCurrentScene().addChild(buildLandscape());
 
-            getCurrentCamera().setPosition(0,2,4);
+            getCurrentCamera().setPosition(0,2,8);
             getCurrentCamera().setLookAt(0,1,-40);
 
             getCurrentScene().setFog(new FogMaterialPlugin.FogParams(FogMaterialPlugin.FogType.LINEAR, 0xCCCCCC, 1, 150));
+
+            Material planeMaterial = new Material();
+            planeMaterial.enableLighting(true);
+            planeMaterial.setDiffuseMethod(new DiffuseMethod.Lambert());
+
+            Material sphereMaterial = new Material();
+            sphereMaterial.enableLighting(true);
+            sphereMaterial.setDiffuseMethod(new DiffuseMethod.Lambert());
 
             //
             // -- Create a post processing manager. We can add multiple passes to this.
             //
 
-/*
             effectsManager = new PostProcessingManager(this);
-            RenderPass renderPass = new RenderPass(getCurrentScene(), getCurrentCamera(), 0);
-            effectsManager.addPass(renderPass);
 
-            BloomEffect bloomEffect = new BloomEffect(getCurrentScene(), getCurrentCamera(), getViewportWidth(), getViewportHeight(), 0x111111, 0xffffff, BlendPass.BlendMode.SCREEN);
+            BloomEffect bloomEffect = new BloomEffect(
+                getCurrentScene(), getCurrentCamera(), getViewportWidth(),
+                getViewportHeight(), 0x111111, 0xffffff, BlendPass.BlendMode.SCREEN);
             effectsManager.addEffect(bloomEffect);
-
             bloomEffect.setRenderToScreen(true);
-
-            ShadowEffect shadowEffect = new ShadowEffect(getCurrentScene(), getCurrentCamera(), light, 2048);
-            shadowEffect.setShadowInfluence(.5f);
-            effectsManager.addEffect(shadowEffect);
-            shadowEffect.setRenderToScreen(true);
-*/
 
         }
 
-/*
         public void onRender(final long ellapsedTime, final double deltaTime) {
             effectsManager.render(ellapsedTime, deltaTime);
         }
-*/
 
         private Object3D buildLandscape() {
             LoaderOBJ objParser = new LoaderOBJ(mContext.getResources(), mTextureManager, R.raw.minecart_scene_obj);
@@ -157,12 +147,11 @@ public class DemoFragment extends AExampleFragment {
             return o;
         }
 
-
         @NonNull
         private DirectionalLight buildDirectionalLight() {
             final DirectionalLight directionalLight = new DirectionalLight();
-            directionalLight.setPosition(0.20, 1.0, 0.6);
-            directionalLight.setPower(1.75f);
+            directionalLight.setPosition(0.20, 5.0, 0.6);
+            directionalLight.setPower(0.95f);
             directionalLight.setLookAt(Vector3.ZERO);
             directionalLight.enableLookAt();
             return directionalLight;
@@ -174,7 +163,6 @@ public class DemoFragment extends AExampleFragment {
             material.enableLighting(true);
             material.setColor(color);
             material.setDiffuseMethod(new DiffuseMethod.Lambert());
-//            material.setSpecularMethod(new SpecularMethod.Phong());
             return material;
         }
 
@@ -193,8 +181,6 @@ public class DemoFragment extends AExampleFragment {
             }
             material.setColorInfluence(0);
             texture.setInfluence(1.0f);
-//                material.setColor(color);
-//                material.setColorInfluence(.5f);
 
             return material;
         }

@@ -10,13 +10,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        applicationId "com.kanawish.tangotalk.rajademo"
+        applicationId "com.kanawish.raja"
         minSdkVersion 19
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         debug {
@@ -35,32 +33,13 @@ android {
     }
 }
 
-def external_lib_prefix = "../tangoLibs"
-repositories {
-    flatDir {
-        dirs external_lib_prefix + '/aar'
-    }
-}
-
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':commonLib')
 
-    compile fileTree(dir: external_lib_prefix + '/jar', include: ['**/*.jar'])
-    compile (name: 'TangoSupport_Qianru_Java', ext: 'aar')
+//    compile 'org.rajawali3d:rajawali:1.0.325@aar'
 
-    compile project(':rajaTangoLib')
-
-    compile 'com.android.support:appcompat-v7:24.0.0'
-    compile "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
-    compile "com.android.support:design:$rootProject.supportLibraryVersion"
-    compile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
-    compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha3'
-
-    // APT/Plugin based goodness
-    apt "com.jakewharton:butterknife-compiler:$project.butterKnifeVersion"
-    compile "com.jakewharton:butterknife:$project.butterKnifeVersion"
-    apt "com.google.auto.value:auto-value:$project.autoValueVersion"
-    apt "com.ryanharter.auto.value:auto-value-gson:$project.autoValueGsonVersion"
-
+    // Latest version of Rajawali
+    // see https://github.com/Rajawali/Rajawali
+    // and https://travis-ci.org/Rajawali/Rajawali/builds
+    compile 'org.rajawali3d:rajawali:1.1.517-SNAPSHOT@aar'
 }

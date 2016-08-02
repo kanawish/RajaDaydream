@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 /**
- * Rajawali primitives that are not part of the core library.
+ * Rajawali renderable objects used in more than one sample.
  */
-package com.kanawish.tangotalk.raja.renderables.primitives;
+package com.kanawish.raja.raja.renderables;

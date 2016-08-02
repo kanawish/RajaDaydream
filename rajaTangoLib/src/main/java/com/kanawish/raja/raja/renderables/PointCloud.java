@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanawish.tangotalk.raja.renderables;
+package com.kanawish.raja.raja.renderables;
 
 import android.graphics.Color;
 
 
-import com.kanawish.tangotalk.raja.renderables.primitives.Points;
+import com.kanawish.raja.raja.renderables.primitives.Points;
 
 import org.rajawali3d.materials.Material;
 

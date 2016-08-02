@@ -19,27 +19,16 @@ import android.util.AttributeSet;
 
 import com.google.vr.sdk.base.GvrView;
 
-import org.rajawali3d.surface.IRajawaliSurface;
-import org.rajawali3d.surface.IRajawaliSurface.ANTI_ALIASING_CONFIG;
 import org.rajawali3d.vr.renderer.RajaStereoRenderer;
+
+import static org.rajawali3d.view.ISurface.*;
 
 /**
  *
  */
 public class RajaVrView extends GvrView {
 
-//    protected RendererDelegate mRendererDelegate;
-
-    protected double               mFrameRate          = 60.0;
-    protected int                  mRenderMode         = IRajawaliSurface.RENDERMODE_WHEN_DIRTY;
     protected ANTI_ALIASING_CONFIG mAntiAliasingConfig = ANTI_ALIASING_CONFIG.NONE;
-    protected boolean              mIsTransparent      = false;
-    protected int                  mBitsRed            = 5;
-    protected int                  mBitsGreen          = 6;
-    protected int                  mBitsBlue           = 5;
-    protected int                  mBitsAlpha          = 0;
-    protected int                  mBitsDepth          = 16;
-    protected int                  mMultiSampleCount   = 0;
 
     private RajaStereoRenderer rajaRenderer;
 
@@ -56,32 +45,15 @@ public class RajaVrView extends GvrView {
         if (attrs == null) {
             return;
         }
-        final TypedArray array = context.obtainStyledAttributes(attrs, org.rajawali3d.R.styleable.RajawaliSurfaceView);
+        final TypedArray array = context.obtainStyledAttributes(attrs, org.rajawali3d.R.styleable.SurfaceView);
         final int count = array.getIndexCount();
         for (int i = 0; i < count; ++i) {
             int attr = array.getIndex(i);
-            if (attr == org.rajawali3d.R.styleable.RajawaliSurfaceView_frameRate) {
-                mFrameRate = array.getFloat(attr, 60.0f);
-            } else if (attr == org.rajawali3d.R.styleable.RajawaliSurfaceView_renderMode) {
-                mRenderMode = array.getInt(attr, IRajawaliSurface.RENDERMODE_WHEN_DIRTY);
-            } else if (attr == org.rajawali3d.R.styleable.RajawaliSurfaceView_antiAliasingType) {
+            if (attr == org.rajawali3d.R.styleable.SurfaceView_antiAliasingType) {
                 mAntiAliasingConfig = ANTI_ALIASING_CONFIG
                     .fromInteger(array.getInteger(attr, ANTI_ALIASING_CONFIG.NONE.ordinal()));
-            } else if (attr == org.rajawali3d.R.styleable.RajawaliSurfaceView_multiSampleCount) {
-                mMultiSampleCount = array.getInteger(attr, 0);
-            } else if (attr == org.rajawali3d.R.styleable.RajawaliSurfaceView_isTransparent) {
-                mIsTransparent = array.getBoolean(attr, false);
-            } else if (attr == org.rajawali3d.R.styleable.RajawaliSurfaceView_bitsRed) {
-                mBitsRed = array.getInteger(attr, 5);
-            } else if (attr == org.rajawali3d.R.styleable.RajawaliSurfaceView_bitsGreen) {
-                mBitsGreen = array.getInteger(attr, 6);
-            } else if (attr == org.rajawali3d.R.styleable.RajawaliSurfaceView_bitsBlue) {
-                mBitsBlue = array.getInteger(attr, 5);
-            } else if (attr == org.rajawali3d.R.styleable.RajawaliSurfaceView_bitsAlpha) {
-                mBitsAlpha = array.getInteger(attr, 0);
-            } else if (attr == org.rajawali3d.R.styleable.RajawaliSurfaceView_bitsDepth) {
-                mBitsDepth = array.getInteger(attr, 16);
             }
+            // TODO: Add other xml configuration attributes.
         }
         array.recycle();
     }

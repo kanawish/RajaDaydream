@@ -1,4 +1,4 @@
-package com.kanawish.tangotalk.controlroom;
+package com.kanawish.raja.controlroom;
 
 import android.opengl.Matrix;
 import android.os.Bundle;

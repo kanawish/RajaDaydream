@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanawish.tangotalk.raja.renderables.primitives;
+package com.kanawish.raja.raja.renderables.primitives;
 
 import android.opengl.GLES10;
 import android.opengl.GLES20;

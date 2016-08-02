@@ -1,7 +1,9 @@
-package com.kanawish.tangotalk.rajademo;
+package com.kanawish.raja;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.kanawish.raja.rajademo.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -10,10 +12,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-/*
-        BasicFragment fragment = BasicFragment.buildInstance();
-        String name = BasicFragment.class.getName();
-*/
         DemoFragment fragment = DemoFragment.buildInstance();
         String name = DemoFragment.class.getName();
 
@@ -21,10 +19,5 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.content_frame, fragment, name)
                 .commit();
 
-        /*
-            Fragment fragment = (Fragment) aClass.newInstance();
-            fragment.setArguments(bundle);
-
-        */
     }
 }

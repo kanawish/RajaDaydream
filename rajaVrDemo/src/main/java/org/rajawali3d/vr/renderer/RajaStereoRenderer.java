@@ -14,7 +14,6 @@
 package org.rajawali3d.vr.renderer;
 
 import android.content.Context;
-import android.view.MotionEvent;
 
 import com.google.vr.sdk.base.Eye;
 import com.google.vr.sdk.base.GvrView;
@@ -26,7 +25,7 @@ import org.rajawali3d.Object3D;
 import org.rajawali3d.math.Matrix4;
 import org.rajawali3d.math.Quaternion;
 import org.rajawali3d.math.vector.Vector3;
-import org.rajawali3d.renderer.RajawaliRenderer;
+import org.rajawali3d.renderer.Renderer;
 
 import java.util.concurrent.TimeUnit;
 
@@ -44,7 +43,7 @@ import timber.log.Timber;
  *
  * This class is almost identical to the original Rajawali VR renderer.
  */
-public abstract class RajaStereoRenderer extends RajawaliRenderer implements GvrView.StereoRenderer {
+public abstract class RajaStereoRenderer extends Renderer implements GvrView.StereoRenderer {
     private static final float MAX_LOOKAT_ANGLE = 10;
 
     protected Matrix4 currentEyeMatrix;

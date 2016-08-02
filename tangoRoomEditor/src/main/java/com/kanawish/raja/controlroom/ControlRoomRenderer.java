@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.kanawish.tangotalk.controlroom;
+package com.kanawish.raja.controlroom;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -23,7 +23,7 @@ import android.view.MotionEvent;
 
 import com.google.atap.tangoservice.TangoCameraIntrinsics;
 import com.google.atap.tangoservice.TangoPoseData;
-import com.kanawish.tangotalk.raja.ScenePoseCalculator;
+import com.kanawish.raja.raja.ScenePoseCalculator;
 
 import org.rajawali3d.Object3D;
 import org.rajawali3d.animation.Animation;
@@ -35,7 +35,6 @@ import org.rajawali3d.loader.ParsingException;
 import org.rajawali3d.materials.Material;
 import org.rajawali3d.materials.methods.DiffuseMethod;
 import org.rajawali3d.materials.methods.SpecularMethod;
-import org.rajawali3d.materials.plugins.FogMaterialPlugin;
 import org.rajawali3d.materials.textures.ATexture;
 import org.rajawali3d.materials.textures.StreamingTexture;
 import org.rajawali3d.materials.textures.Texture;

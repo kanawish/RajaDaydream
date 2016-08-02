@@ -25,6 +25,9 @@ import org.rajawali3d.vr.renderer.RajaStereoRenderer;
 public final class DemoVRRenderer extends RajaStereoRenderer {
 
     private DirectionalLight directionalLight;
+    private Object3D sphereA;
+    private Material sphereAMaterial;
+    private Material lookedAtMaterial;
 
     public DemoVRRenderer(Context context) {
         super(context);
@@ -36,6 +39,7 @@ public final class DemoVRRenderer extends RajaStereoRenderer {
         buildDirectionalLight();
 
         getCurrentCamera().setFarPlane(1000);
+
         /**
          * Skybox images by Emil Persson, aka Humus. http://www.humus.name humus@comhem.se
          */
@@ -58,11 +62,12 @@ public final class DemoVRRenderer extends RajaStereoRenderer {
         plMarker.setMaterial(buildMaterial(plColor));
         getCurrentScene().addChild(plMarker);
 
-        Material yellowMaterial = buildMaterial(Color.YELLOW);
+        sphereAMaterial = buildMaterial(Color.YELLOW);
+        lookedAtMaterial = buildMaterial(Color.RED);
 
-        Object3D sphereA = new Sphere(1, 30, 30);
+        sphereA = new Sphere(1, 30, 30);
         sphereA.setPosition(-2, 0, -10);
-        sphereA.setMaterial(yellowMaterial);
+        sphereA.setMaterial(sphereAMaterial);
         getCurrentScene().addChild(sphereA);
 
         Object3D sphereB = new Sphere(1, 30, 30);
@@ -73,6 +78,14 @@ public final class DemoVRRenderer extends RajaStereoRenderer {
         buildOBJ();
     }
 
+    @Override
+    public void onRender(long elapsedTime, double deltaTime) {
+        // Let's highlight an object when it's looked-at.
+        sphereA.setMaterial(isLookingAtObject(sphereA)?lookedAtMaterial:sphereAMaterial);
+
+        // Parent will render the scene.
+        super.onRender(elapsedTime, deltaTime);
+    }
 
     private Object3D buildOBJ() {
         Object3D o;

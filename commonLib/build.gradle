@@ -33,18 +33,18 @@ dependencies {
     compile "io.reactivex:rxjava:$project.rxJavaVersion"
     // Android Extensions - https://github.com/ReactiveX/RxAndroid/wiki
     compile "io.reactivex:rxandroid:$project.rxAndroidVersion"
-    compile "com.jakewharton.rxrelay:rxrelay:1.1.0"
+    compile "com.jakewharton.rxrelay:rxrelay:1.1.0" // https://github.com/JakeWharton/RxRelay/blob/master/CHANGELOG.md
     compile "com.jakewharton.rxbinding:rxbinding:$project.rxBindingVersion"
     compile "com.jakewharton.rxbinding:rxbinding-support-v4:$project.rxBindingVersion"
     compile "com.jakewharton.rxbinding:rxbinding-appcompat-v7:$project.rxBindingVersion"
-//    compile 'com.jakewharton.rxbinding:rxbinding-design:0.4.0'
-//    compile 'com.jakewharton.rxbinding:rxbinding-recyclerview-v7:0.4.0'
+    compile 'com.jakewharton.rxbinding:rxbinding-design:0.4.0'
+    compile 'com.jakewharton.rxbinding:rxbinding-recyclerview-v7:0.4.0'
 
     // Square Networking
     compile "com.squareup.okhttp3:okhttp:$project.okhttpVersion"
     compile "com.squareup.okhttp3:logging-interceptor:$project.okhttpVersion"
     compile "com.squareup.okhttp3:okhttp-urlconnection:$project.okhttpVersion"
-//    compile "com.squareup.picasso:picasso:$project.picassoVersion"
+    compile "com.squareup.picasso:picasso:$project.picassoVersion"
     compile "com.jakewharton.picasso:picasso2-okhttp3-downloader:$project.picassoOkHttpDownloaderVersion"
     compile "com.squareup.retrofit2:retrofit:$project.retrofitVersion"
     compile "com.squareup.retrofit2:adapter-rxjava:$project.retrofitVersion"
