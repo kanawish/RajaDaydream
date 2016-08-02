@@ -110,8 +110,8 @@ public class DemoFragment extends BaselineRenderingFragment {
 
         }
 
-        public void onRender(final long ellapsedTime, final double deltaTime) {
-            effectsManager.render(ellapsedTime, deltaTime);
+        public void onRender(final long elapsedTime, final double deltaTime) {
+            effectsManager.render(elapsedTime, deltaTime);
         }
 
         private Object3D buildLandscape() {
