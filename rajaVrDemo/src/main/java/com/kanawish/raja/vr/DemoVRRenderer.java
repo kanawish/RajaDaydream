@@ -67,16 +67,6 @@ public final class DemoVRRenderer extends RajaStereoRenderer {
 
         getCurrentScene().setFog(new FogMaterialPlugin.FogParams(FogMaterialPlugin.FogType.LINEAR, 0xCCCCCC, 1, 150));
 
-        // Raja-effects don't play nice with Gvr.
-        // TODO: GPU post processing? Using render to texture?
-/*
-        effectsManager = new PostProcessingManager(this);
-        BloomEffect bloomEffect = new BloomEffect(
-            getCurrentScene(), getCurrentCamera(), getViewportWidth(),
-            getViewportHeight(), 0x111111, 0xffffff, BlendPass.BlendMode.SCREEN);
-        effectsManager.addEffect(bloomEffect);
-        bloomEffect.setRenderToScreen(true);
-*/
     }
 
     @Override
