@@ -206,6 +206,7 @@ public class ControlRoomRenderer extends Renderer {
     public synchronized void updateObjectPose(float[] planeFitTransform) {
         objectTransform = new Matrix4(planeFitTransform);
         objectPoseUpdated = true;
+
     }
 
     /**
