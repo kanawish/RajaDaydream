@@ -4,7 +4,7 @@ apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.0 rc4"
+    buildToolsVersion "24.0.2"
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -49,11 +49,11 @@ dependencies {
 
     compile project(':rajaTangoLib')
 
-    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'com.android.support:appcompat-v7:24.2.0'
 
     // APT/Plugin based goodness
-    apt "com.jakewharton:butterknife-compiler:$project.butterKnifeVersion"
-    compile "com.jakewharton:butterknife:$project.butterKnifeVersion"
-    apt "com.google.auto.value:auto-value:$project.autoValueVersion"
-    apt "com.ryanharter.auto.value:auto-value-gson:$project.autoValueGsonVersion"
+    apt "com.jakewharton:butterknife-compiler:8.4.0" // https://github.com/JakeWharton/butterknife/blob/master/CHANGELOG.md
+    compile "com.jakewharton:butterknife:8.4.0"
+    apt "com.google.auto.value:auto-value:1.2" // https://github.com/google/auto
+    apt "com.ryanharter.auto.value:auto-value-gson:0.4.2" // https://github.com/rharter/auto-value-gson/blob/master/CHANGELOG.md
 }

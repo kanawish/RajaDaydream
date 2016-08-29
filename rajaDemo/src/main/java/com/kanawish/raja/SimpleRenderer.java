@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
 
+import com.kanawish.raja.rajademo.R;
+
 import org.rajawali3d.ATransformable3D;
 import org.rajawali3d.animation.Animation;
 import org.rajawali3d.animation.EllipticalOrbitAnimation3D;
@@ -11,6 +13,7 @@ import org.rajawali3d.animation.RotateOnAxisAnimation;
 import org.rajawali3d.lights.DirectionalLight;
 import org.rajawali3d.materials.Material;
 import org.rajawali3d.materials.methods.DiffuseMethod;
+import org.rajawali3d.materials.textures.ATexture;
 import org.rajawali3d.math.vector.Vector3;
 import org.rajawali3d.postprocessing.PostProcessingManager;
 import org.rajawali3d.primitives.Cube;
@@ -27,6 +30,16 @@ class SimpleRenderer extends BaselineRenderer {
     protected void initScene() {
         try {
             getCurrentScene().setBackgroundColor(Color.BLUE);
+
+            getCurrentCamera().setFarPlane(1000);
+
+            // Skybox images by Emil Persson, aka Humus. http://www.humus.name humus@comhem.se
+            try {
+                getCurrentScene().setSkybox(R.drawable.posx, R.drawable.negx,
+                        R.drawable.posy, R.drawable.negy, R.drawable.posz, R.drawable.negz);
+            } catch (ATexture.TextureException e) {
+                e.printStackTrace();
+            }
 
             // Lights,
             DirectionalLight key = new DirectionalLight(0,0.1,0.2);
