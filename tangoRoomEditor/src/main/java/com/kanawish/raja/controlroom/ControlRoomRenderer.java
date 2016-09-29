@@ -29,6 +29,9 @@ import org.rajawali3d.Object3D;
 import org.rajawali3d.animation.Animation;
 import org.rajawali3d.animation.Animation3D;
 import org.rajawali3d.animation.RotateOnAxisAnimation;
+import org.rajawali3d.debug.CoordinateTrident;
+import org.rajawali3d.debug.DebugCamera;
+import org.rajawali3d.debug.DebugLight;
 import org.rajawali3d.lights.DirectionalLight;
 import org.rajawali3d.loader.LoaderOBJ;
 import org.rajawali3d.loader.ParsingException;
@@ -43,6 +46,7 @@ import org.rajawali3d.math.Quaternion;
 import org.rajawali3d.math.vector.Vector3;
 import org.rajawali3d.primitives.Cube;
 import org.rajawali3d.primitives.Plane;
+import org.rajawali3d.primitives.RectangularPrism;
 import org.rajawali3d.primitives.ScreenQuad;
 import org.rajawali3d.primitives.Sphere;
 import org.rajawali3d.renderer.Renderer;
@@ -104,15 +108,17 @@ public class ControlRoomRenderer extends Renderer {
         light.setPower(1.2f);
         light.setPosition(0, 10, 0);
         getCurrentScene().addLight(light);
+        getCurrentScene().addChild(new DebugLight(light));
 
         // Set-up a material
         Material cubeMaterial = buildMaterial(Color.RED);
 
         // Build a Cube
+//        cube = new CoordinateTrident();
         cube = new Cube(CUBE_SIDE_LENGTH);
         cube.setMaterial(cubeMaterial);
-        cube.setPosition(0, 0, 0);
         cube.setRotation(Vector3.Axis.Z, 180);
+        cube.setPosition(0, 0, 0);
         cube.setVisible(false);
         getCurrentScene().addChild(cube);
 
@@ -133,12 +139,14 @@ public class ControlRoomRenderer extends Renderer {
         } catch (ATexture.TextureException e) {
             e.printStackTrace();
         }
-        plane = new Plane();
+        plane = new Plane(0.5f,0.5f,1,1);
         plane.setMaterial(checkerboard);
         plane.setDoubleSided(true);
         plane.setColor(0xff0000ff);
         plane.setVisible(false);
         getCurrentScene().addChild(plane);
+
+//        getCurrentScene().addChild(new DebugCamera(getCurrentCamera())); // ?
     }
 
     @NonNull
@@ -156,6 +164,7 @@ public class ControlRoomRenderer extends Renderer {
         Furniture next() {
             int i = (this.ordinal() + 1) % Furniture.values().length;
             return Furniture.values()[i];
+//            return PLANE ;
         }
     }
     Furniture currentFurniture = Furniture.PLANE;

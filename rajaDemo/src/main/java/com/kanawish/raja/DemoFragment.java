@@ -25,6 +25,7 @@ public class DemoFragment extends BaselineRenderingFragment {
 
     @Override
     public BaselineRenderer createRenderer() {
+        // NOTE: If you build your own renderer, simply switch them in here.
         return new SimpleRenderer(getActivity(), this);
     }
 

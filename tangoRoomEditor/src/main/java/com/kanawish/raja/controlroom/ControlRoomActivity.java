@@ -150,7 +150,6 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
                 if (planeFitTransform != null) {
                     // Update the position of the rendered cube to the pose of the detected plane
                     // This update is made thread safe by the renderer
-                    surfaceView.queueEvent( );
                     renderer.updateObjectPose(planeFitTransform);
                 }
 

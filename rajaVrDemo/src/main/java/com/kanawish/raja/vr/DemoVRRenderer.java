@@ -22,7 +22,7 @@ import org.rajawali3d.postprocessing.passes.BlendPass;
 import org.rajawali3d.primitives.Sphere;
 import org.rajawali3d.vr.renderer.RajaStereoRenderer;
 
-public final class DemoVRRenderer extends RajaStereoRenderer {
+public final class DemoVrRenderer extends RajaStereoRenderer {
 
     private Material sphereAMaterial;
     private Material lookedAtMaterial;
@@ -30,7 +30,7 @@ public final class DemoVRRenderer extends RajaStereoRenderer {
 
     private PostProcessingManager effectsManager;
 
-    public DemoVRRenderer(Context context) {
+    public DemoVrRenderer(Context context) {
         super(context);
     }
 

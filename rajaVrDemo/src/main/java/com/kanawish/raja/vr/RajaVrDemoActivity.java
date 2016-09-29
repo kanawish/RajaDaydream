@@ -53,10 +53,13 @@ public class RajaVrDemoActivity extends GvrActivity {
         RajaVrView gvrView = (RajaVrView) findViewById(R.id.gvr_view);
 
         gvrView.setEGLConfigChooser(8, 8, 8, 8, 16, 8);
-        gvrView.setRenderer(new DemoVRRenderer(this));
+
+        // NOTE: If you build your own renderer, simply switch them in here.
+        gvrView.setRenderer(new SimpleVrRenderer(this));
+
         gvrView.setTransitionViewEnabled(true);
         gvrView.setOnCardboardBackButtonListener(() -> vibrator.vibrate(50));
-        setGvrView(gvrView);
+        this.setGvrView(gvrView);
 
         // Initialize 3D audio engine.
         gvrAudioEngine = new GvrAudioEngine(this, GvrAudioEngine.RenderingMode.BINAURAL_HIGH_QUALITY);
