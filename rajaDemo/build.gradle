@@ -35,6 +35,10 @@ android {
 dependencies {
     compile project(':commonLib')
 
+    annotationProcessor "com.github.stephanenicolas.toothpick:toothpick-compiler:1.0.0" // https://github.com/stephanenicolas/toothpick/blob/master/CHANGELOG.md
+    compile "com.github.stephanenicolas.toothpick:toothpick-runtime:1.0.0"
+    compile "com.github.stephanenicolas.toothpick:smoothie:1.0.0"
+
 //    compile 'org.rajawali3d:rajawali:1.0.325@aar'
 
     // Latest version of Rajawali

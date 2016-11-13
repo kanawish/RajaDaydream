@@ -1,5 +1,6 @@
 package com.kanawish.raja.controlroom;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +20,6 @@ import com.google.atap.tangoservice.TangoException;
 import com.google.atap.tangoservice.TangoOutOfDateException;
 import com.google.atap.tangoservice.TangoPoseData;
 import com.google.atap.tangoservice.TangoXyzIjData;
-import com.jakewharton.rxrelay.PublishRelay;
 import com.kanawish.raja.controlroom.utils.TangoMath;
 import com.projecttango.tangosupport.TangoPointCloudManager;
 import com.projecttango.tangosupport.TangoSupport;
@@ -31,8 +31,9 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.PublishSubject;
 
 import static com.google.atap.tangoservice.Tango.*;
 import static com.projecttango.tangosupport.TangoSupport.*;
@@ -62,8 +63,8 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
     private SurfaceView surfaceView;
     private ControlRoomRenderer renderer;
 
-    private PublishRelay<String> log = PublishRelay.create();
-    private Subscription logSubscription;
+    private PublishSubject<String> log = PublishSubject.create();
+    private Disposable logDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +87,7 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
     protected void onResume() {
         super.onResume();
 
-        logSubscription = log
+        logDisposable = log
             .throttleFirst(100, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -112,7 +113,7 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
     protected void onPause() {
         super.onPause();
 
-        logSubscription.unsubscribe();
+        logDisposable.dispose();
 
         // mainThread
         synchronized (this) {
@@ -365,6 +366,7 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
      *
      * @param pose the pose to log.
      */
+    @SuppressLint("DefaultLocale")
     private void logPose(TangoPoseData pose) {
         StringBuilder stringBuilder = new StringBuilder();
         float translation[] = pose.getTranslationAsFloats();
@@ -373,6 +375,6 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
         stringBuilder.append(String.format("[%+3.3f,%+3.3f,%+3.3f]\n",translation[0],translation[1],translation[2]));
         stringBuilder.append(String.format("(%+3.3f,%+3.3f,%+3.3f,%+3.3f)",orientation[0],orientation[1],orientation[2],orientation[3]));
 
-        log.call(stringBuilder.toString());
+        log.onNext(stringBuilder.toString());
     }
 }

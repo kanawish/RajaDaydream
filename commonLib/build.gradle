@@ -22,14 +22,26 @@ android {
     }
 }
 
+final SUPPORT_LIB_VERSION = '24.2.1' // https://developer.android.com/topic/libraries/support-library/revisions.html
+final FIREBASE_VERSION = '9.6.1' // https://firebase.google.com/support/release-notes/android
+final PLAY_SERVICES_VERSION = '9.6.1' // https://developers.google.com/android/guides/releases
+
 dependencies {
     // NOTE: commonLib dependencies are for 'framework' type dependencies I always want in my projects.
+    // Google Framework Dependencies
+    compile "com.android.support:support-v13:${SUPPORT_LIB_VERSION}"
+    compile "com.android.support:appcompat-v7:${SUPPORT_LIB_VERSION}"
 
     // Timber Logging API: Better method signatures, easy log-level-by-flavor management, decent lint checks, etc.
     // https://github.com/JakeWharton/timber
     compile "com.jakewharton.timber:timber:4.3.0" // https://github.com/JakeWharton/timber/blob/master/CHANGELOG.md
 
+    // RxJava 2 for your declarative programming needs
+    compile "io.reactivex.rxjava2:rxjava:2.0.0-RC4" // https://github.com/ReactiveX/RxJava/blob/2.x/CHANGES.md
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.0-RC1' // https://github.com/ReactiveX/RxAndroid/blob/2.x/CHANGES.md
+
     // RxJava
+/*
     compile "io.reactivex:rxjava:1.1.9" // https://github.com/ReactiveX/RxJava/blob/1.x/CHANGES.md
     compile "io.reactivex:rxandroid:1.2.1" // https://github.com/ReactiveX/RxAndroid/blob/1.x/CHANGES.md
     compile "com.jakewharton.rxrelay:rxrelay:1.1.0" // https://github.com/JakeWharton/RxRelay/blob/master/CHANGELOG.md
@@ -38,15 +50,16 @@ dependencies {
     compile "com.jakewharton.rxbinding:rxbinding-appcompat-v7:0.4.0"
     compile "com.jakewharton.rxbinding:rxbinding-design:0.4.0"
     compile "com.jakewharton.rxbinding:rxbinding-recyclerview-v7:0.4.0"
+*/
 
     // Square Networking
     compile "com.squareup.okhttp3:okhttp:3.4.1" // https://github.com/square/okhttp/blob/master/CHANGELOG.md
-    compile "com.squareup.okhttp3:logging-interceptor:3.4.1"
     compile "com.squareup.okhttp3:okhttp-urlconnection:3.4.1"
+    debugCompile "com.squareup.okhttp3:logging-interceptor:3.4.1"
+    compile "com.squareup.retrofit2:retrofit:2.1.0" // https://github.com/square/retrofit/blob/master/CHANGELOG.md
+    compile "com.squareup.retrofit2:converter-gson:2.1.0"
+    compile "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0-RC3" // https://github.com/JakeWharton/retrofit2-rxjava2-adapter/blob/master/CHANGELOG.md
     compile "com.squareup.picasso:picasso:2.5.2" // https://github.com/square/picasso/blob/master/CHANGELOG.md
     compile "com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2" // https://github.com/JakeWharton/picasso2-okhttp3-downloader/blob/master/CHANGELOG.md
-    compile "com.squareup.retrofit2:retrofit:2.1.0" // https://github.com/square/retrofit/blob/master/CHANGELOG.md
-    compile "com.squareup.retrofit2:adapter-rxjava:2.1.0"
-    compile "com.squareup.retrofit2:converter-gson:2.1.0"
 
 }

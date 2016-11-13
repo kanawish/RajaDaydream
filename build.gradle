@@ -7,15 +7,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.0-rc1'
+        classpath 'com.android.tools.build:gradle:2.2.2'
         classpath 'com.google.gms:google-services:3.0.0'
 
         // Retrolambda Support
-        classpath 'me.tatarka:gradle-retrolambda:3.2.5'
-        classpath 'me.tatarka.retrolambda.projectlombok:lombok.ast:0.2.3.a2'
+        classpath 'me.tatarka:gradle-retrolambda:3.3.0'
 
-        // Annotation processing
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
     }
 }
 
