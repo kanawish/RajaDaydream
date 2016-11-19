@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId "com.kanawish.raja.vr"
         minSdkVersion 19
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
     }
@@ -37,9 +37,10 @@ dependencies {
 
     compile project(':commonLib')
 
-    annotationProcessor "com.github.stephanenicolas.toothpick:toothpick-compiler:1.0.0" // https://github.com/stephanenicolas/toothpick/blob/master/CHANGELOG.md
-    compile "com.github.stephanenicolas.toothpick:toothpick-runtime:1.0.0"
-    compile "com.github.stephanenicolas.toothpick:smoothie:1.0.0"
+    // APT/Plugin based goodness
+    annotationProcessor "com.github.stephanenicolas.toothpick:toothpick-compiler:1.0.1" // https://github.com/stephanenicolas/toothpick/blob/master/CHANGELOG.md
+    compile "com.github.stephanenicolas.toothpick:toothpick-runtime:1.0.1"
+    compile "com.github.stephanenicolas.toothpick:smoothie:1.0.1"
 
     // Latest version of Rajawali
     // see https://github.com/Rajawali/Rajawali
