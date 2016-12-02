@@ -1,11 +1,15 @@
-package com.kanawish.raja.vr;
+package com.kanawish.raja;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.view.MotionEvent;
+import android.support.annotation.Nullable;
+
+import com.kanawish.raja.rajademo.R;
 
 import org.rajawali3d.Object3D;
+import org.rajawali3d.animation.Animation;
+import org.rajawali3d.animation.Animation3D;
+import org.rajawali3d.animation.RotateOnAxisAnimation;
 import org.rajawali3d.lights.DirectionalLight;
 import org.rajawali3d.loader.LoaderOBJ;
 import org.rajawali3d.loader.ParsingException;
@@ -19,24 +23,26 @@ import org.rajawali3d.math.vector.Vector3;
 import org.rajawali3d.postprocessing.PostProcessingManager;
 import org.rajawali3d.postprocessing.effects.BloomEffect;
 import org.rajawali3d.postprocessing.passes.BlendPass;
-import org.rajawali3d.primitives.Sphere;
-import org.rajawali3d.vr.renderer.RajaStereoRenderer;
 
-public final class DemoVrRenderer extends RajaStereoRenderer {
-
-    private Material sphereAMaterial;
-    private Material lookedAtMaterial;
-    private Object3D sphereA;
+/**
+ * Created by kanawish on 2016-08-03.
+ */
+final class DemoRenderer extends BaselineRenderer {
 
     private PostProcessingManager effectsManager;
 
-    public DemoVrRenderer(Context context) {
-        super(context);
+    public DemoRenderer(Context context, @Nullable BaselineRenderingFragment fragment) {
+        super(context, fragment);
     }
 
     @Override
-    public void initScene() {
+    protected void initScene() {
 
+        // Add overall light to our scene. Directional behaves like sunlight.
+        DirectionalLight light = buildDirectionalLight();
+        getCurrentScene().addLight(light);
+
+        // For skybox below.
         getCurrentCamera().setFarPlane(1000);
 
         // Skybox images by Emil Persson, aka Humus. http://www.humus.name humus@comhem.se
@@ -47,52 +53,40 @@ public final class DemoVrRenderer extends RajaStereoRenderer {
             e.printStackTrace();
         }
 
-        sphereAMaterial = buildMaterial(Color.YELLOW);
-        lookedAtMaterial = buildMaterial(Color.RED);
+        getCurrentScene().addChild(buildLandscape());
 
-        sphereA = new Sphere(1, 30, 30);
-        sphereA.setPosition(-4.5f, -1.75f, -10f);
-        sphereA.setMaterial(sphereAMaterial);
-        getCurrentScene().addChild(sphereA);
-
-        getCurrentScene().addLight(buildDirectionalLight(-2.0, -8.0, -5.0, 1.5f));
-
-        Object3D landscape = buildLandscape();
-        landscape.setPosition(0,-3,-8);
-        getCurrentScene().addChild(landscape);
-
-        Object3D tree = buildOBJ(R.raw.demo_1_obj);
-        tree.setPosition(3, -3, -8);
-        getCurrentScene().addChild(tree);
+        getCurrentCamera().setPosition(0, 2, 8);
+        getCurrentCamera().setLookAt(0, 1, -40);
 
         getCurrentScene().setFog(new FogMaterialPlugin.FogParams(FogMaterialPlugin.FogType.LINEAR, 0xCCCCCC, 1, 150));
 
+        Material planeMaterial = new Material();
+        planeMaterial.enableLighting(true);
+        planeMaterial.setDiffuseMethod(new DiffuseMethod.Lambert());
+
+        Material sphereMaterial = new Material();
+        sphereMaterial.enableLighting(true);
+        sphereMaterial.setDiffuseMethod(new DiffuseMethod.Lambert());
+
+        //
+        // -- Create a post processing manager. We can add multiple passes to this.
+        //
+
+        effectsManager = new PostProcessingManager(this);
+
+        BloomEffect bloomEffect = new BloomEffect(
+            getCurrentScene(), getCurrentCamera(), getViewportWidth(),
+            getViewportHeight(), 0x111111, 0xffffff, BlendPass.BlendMode.SCREEN);
+        effectsManager.addEffect(bloomEffect);
+        bloomEffect.setRenderToScreen(true);
     }
 
-    @Override
-    public void onRender(long elapsedTime, double deltaTime) {
-        // Let's highlight an object when it's looked-at.
-        sphereA.setMaterial(isLookingAtObject(sphereA)?lookedAtMaterial:sphereAMaterial);
-
-        // Parent will render the scene.
-        super.onRender(elapsedTime, deltaTime);
-    }
-
-    private Object3D buildOBJ(int rawObjResId) {
-        Object3D o;
-        LoaderOBJ objParser = new LoaderOBJ(mContext.getResources(), getTextureManager(), rawObjResId);
-        try {
-            objParser.parse();
-        } catch (ParsingException e) {
-            e.printStackTrace();
-        }
-
-        o = objParser.getParsedObject();
-        return o;
+    public void onRender(final long elapsedTime, final double deltaTime) {
+        effectsManager.render(elapsedTime, deltaTime);
     }
 
     private Object3D buildLandscape() {
-        LoaderOBJ objParser = new LoaderOBJ(mContext.getResources(), mTextureManager, R.raw.landscape_v2_obj);
+        LoaderOBJ objParser = new LoaderOBJ(mContext.getResources(), mTextureManager, R.raw.minecart_scene_obj);
         try {
             objParser.parse();
         } catch (ParsingException e) {
@@ -103,12 +97,32 @@ public final class DemoVrRenderer extends RajaStereoRenderer {
         return o;
     }
 
+    private Object3D buildTree() {
+        LoaderOBJ objParser = new LoaderOBJ(mContext.getResources(), mTextureManager, R.raw.small_tree_color_obj);
+        try {
+            objParser.parse();
+        } catch (ParsingException e) {
+            e.printStackTrace();
+        }
+
+        Object3D o = objParser.getParsedObject();
+        o.setPosition(0, 0, 0);
+
+        Animation3D anim = new RotateOnAxisAnimation(Vector3.Axis.Y, 360);
+        anim.setDurationMilliseconds(16000);
+        anim.setRepeatMode(Animation.RepeatMode.INFINITE);
+        anim.setTransformable3D(o);
+        getCurrentScene().registerAnimation(anim);
+        anim.play();
+
+        return o;
+    }
 
     @NonNull
-    private DirectionalLight buildDirectionalLight(double x, double y, double z, float power) {
+    private DirectionalLight buildDirectionalLight() {
         final DirectionalLight directionalLight = new DirectionalLight();
-        directionalLight.setPosition(x, y, z);
-        directionalLight.setPower(power);
+        directionalLight.setPosition(0.20, 5.0, 0.6);
+        directionalLight.setPower(0.95f);
         directionalLight.setLookAt(Vector3.ZERO);
         directionalLight.enableLookAt();
         return directionalLight;
@@ -140,10 +154,5 @@ public final class DemoVrRenderer extends RajaStereoRenderer {
         texture.setInfluence(1.0f);
 
         return material;
-    }
-
-    @Override
-    public void onTouchEvent(MotionEvent event) {
-        // Nothing to do.
     }
 }

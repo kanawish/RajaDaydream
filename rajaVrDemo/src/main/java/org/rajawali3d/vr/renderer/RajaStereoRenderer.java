@@ -19,7 +19,6 @@ import com.google.vr.sdk.base.Eye;
 import com.google.vr.sdk.base.GvrView;
 import com.google.vr.sdk.base.HeadTransform;
 import com.google.vr.sdk.base.Viewport;
-import com.jakewharton.rxrelay.PublishRelay;
 
 import org.rajawali3d.Object3D;
 import org.rajawali3d.math.Matrix4;
@@ -31,6 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.microedition.khronos.egl.EGLConfig;
 
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 import timber.log.Timber;
 
 /**
@@ -58,7 +59,8 @@ public abstract class RajaStereoRenderer extends Renderer implements GvrView.Ste
     private float[] headView;
 
     // Using relays allows for less spammy logs, possibly other features as well.
-    PublishRelay<float[]> headTransforms = PublishRelay.create();
+
+    PublishSubject<float[]> headTransforms = PublishSubject.create();
 
 	public RajaStereoRenderer(Context context) {
 		super(context);
@@ -91,7 +93,7 @@ public abstract class RajaStereoRenderer extends Renderer implements GvrView.Ste
     @Override
     public void onNewFrame(HeadTransform headTransform) {
         float[] headView = headTransform.getHeadView();
-        headTransforms.call(headView);
+        headTransforms.onNext(headView);
 
         headTransform.getHeadView(this.headView, 0);
         headViewMatrix.setAll(this.headView);

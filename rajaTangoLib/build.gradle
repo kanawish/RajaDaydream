@@ -3,7 +3,7 @@ apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.0 rc4"
+    buildToolsVersion "24.0.2"
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -33,13 +33,13 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile fileTree(dir: external_lib_prefix + '/jar', include: ['**/*.jar'])
-    compile (name: 'TangoSupport_Qianru_Java', ext: 'aar')
+    compile (name: 'tango_support_java_lib', ext: 'aar')
 
     compile project(':commonLib')
 
     // NOTE: Latest Rajawali lib version introduces issues in the sample code, we use an older one for now.
-    compile 'org.rajawali3d:rajawali:1.0.325@aar'
-//    compile 'org.rajawali3d:rajawali:1.1.517-SNAPSHOT@aar'
+//    compile 'org.rajawali3d:rajawali:1.0.325@aar'
+    compile 'org.rajawali3d:rajawali:1.1.517-SNAPSHOT@aar'
 
 
 }

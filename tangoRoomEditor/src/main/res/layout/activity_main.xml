@@ -32,10 +32,12 @@
         android:layout_height="wrap_content"
         android:text="placeholder"/>
 
+<!--
     <Button
         android:layout_gravity="bottom|right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="BLAH"/>
+-->
 
 </FrameLayout>

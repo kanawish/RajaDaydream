@@ -1,7 +1,8 @@
 package com.kanawish.raja.controlroom;
 
-import android.opengl.Matrix;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -19,19 +20,20 @@ import com.google.atap.tangoservice.TangoException;
 import com.google.atap.tangoservice.TangoOutOfDateException;
 import com.google.atap.tangoservice.TangoPoseData;
 import com.google.atap.tangoservice.TangoXyzIjData;
-import com.jakewharton.rxrelay.PublishRelay;
+import com.kanawish.raja.controlroom.utils.TangoMath;
 import com.projecttango.tangosupport.TangoPointCloudManager;
 import com.projecttango.tangosupport.TangoSupport;
 
 import org.rajawali3d.scene.ASceneFrameCallback;
-import org.rajawali3d.surface.RajawaliSurfaceView;
+import org.rajawali3d.view.SurfaceView;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.subjects.PublishSubject;
 
 import static com.google.atap.tangoservice.Tango.*;
 import static com.projecttango.tangosupport.TangoSupport.*;
@@ -42,10 +44,10 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
 
     private static final int INVALID_TEXTURE_ID = 0;
 
+    private Tango tango;
     private TangoCameraIntrinsics tangoCameraIntrinsics;
     private TangoPointCloudManager tangoPointCloudManager;
 
-    private Tango tango;
     private boolean isConnected = false;
     private double cameraPoseTimestamp = 0;
 
@@ -55,37 +57,37 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
     private AtomicBoolean isFrameAvailableTangoThread = new AtomicBoolean(false);
     private double rgbTimestampGlThread;
 
-    PublishRelay<String> log = PublishRelay.create();
 
     private TextView logTextView;
 
-    private RajawaliSurfaceView surfaceView;
+    private SurfaceView surfaceView;
     private ControlRoomRenderer renderer;
 
-    private Subscription logSubscription;
+    private PublishSubject<String> log = PublishSubject.create();
+    private Disposable logDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
         logTextView = (TextView) findViewById(R.id.log_text);
-        surfaceView = new RajawaliSurfaceView(this);
-//        surfaceView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT));
+
+        surfaceView = new SurfaceView(this);
+        surfaceView.setOnTouchListener(this);
         renderer = new ControlRoomRenderer(this);
         surfaceView.setSurfaceRenderer(renderer);
-        surfaceView.setOnTouchListener(this);
         ((LinearLayout)findViewById(R.id.parent)).addView(surfaceView);
 
         tangoPointCloudManager = new TangoPointCloudManager();
-//        setContentView(surfaceView);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        logSubscription = log
+        logDisposable = log
             .throttleFirst(100, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -93,6 +95,7 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
                 throwable -> Log.e(TAG, "log error", throwable));
 
         if (!isConnected) {
+            // runOnTangoReady is run on a new Thread().
             tango = new Tango(ControlRoomActivity.this, () -> {
                 try {
                     TangoSupport.initialize();
@@ -110,8 +113,9 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
     protected void onPause() {
         super.onPause();
 
-        logSubscription.unsubscribe();
+        logDisposable.dispose();
 
+        // mainThread
         synchronized (this) {
             if (isConnected) {
                 renderer.getCurrentScene().clearFrameCallbacks();
@@ -125,11 +129,66 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
         }
     }
 
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+
+            // Calculate click location in u,v (0;1) coordinates.
+            float u = motionEvent.getX() / view.getWidth();
+            float v = motionEvent.getY() / view.getHeight();
+
+            try {
+                // Fit a plane on the clicked point using the latest point cloud data
+                // Synchronize against concurrent access to the RGB timestamp
+                // in the OpenGL thread and a possible service disconnection
+                // due to an onPause event.
+                float[] planeFitTransform;
+                // mainThread
+                synchronized (this) {
+                    planeFitTransform = doFitPlane(u, v, rgbTimestampGlThread);
+                }
+
+                if (planeFitTransform != null) {
+                    // Update the position of the rendered cube to the pose of the detected plane
+                    // This update is made thread safe by the renderer
+                    renderer.updateObjectPose(planeFitTransform);
+                }
+
+            } catch (TangoException t) {
+                Toast.makeText(getApplicationContext(),
+                    R.string.failed_measurement,
+                    Toast.LENGTH_SHORT).show();
+                Log.e(TAG, getString(R.string.failed_measurement), t);
+            } catch (SecurityException t) {
+                Toast.makeText(getApplicationContext(),
+                    R.string.failed_permissions,
+                    Toast.LENGTH_SHORT).show();
+                Log.e(TAG, getString(R.string.failed_permissions), t);
+            }
+        }
+        return true;
+    }
+
     /**
      * Configures the Tango service and connect it to callbacks.
      */
     private void connectTango() {
 
+        TangoConfig config = buildTangoConfig();
+        tango.connect(config);
+
+        // Defining the coordinate frame pairs we are interested in.
+        ArrayList<TangoCoordinateFramePair> framePairs = new ArrayList<>();
+        framePairs.add(new TangoCoordinateFramePair(
+            TangoPoseData.COORDINATE_FRAME_START_OF_SERVICE,
+            TangoPoseData.COORDINATE_FRAME_DEVICE));
+        tango.connectListener(framePairs, buildTangoUpdateListener());
+
+        tangoCameraIntrinsics = tango.getCameraIntrinsics(TangoCameraIntrinsics.TANGO_CAMERA_COLOR);
+    }
+
+    @NonNull
+    private TangoConfig buildTangoConfig() {
         // Use default configuration for Tango Service, plus low latency IMU integration.
         TangoConfig config = tango.getConfig(TangoConfig.CONFIG_TYPE_DEFAULT);
         config.putBoolean(TangoConfig.KEY_BOOLEAN_DEPTH, true);
@@ -142,16 +201,12 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
         // NOTE: These are extra motion tracking flags.
         config.putBoolean(TangoConfig.KEY_BOOLEAN_MOTIONTRACKING, true);
         config.putBoolean(TangoConfig.KEY_BOOLEAN_AUTORECOVERY, true);
+        return config;
+    }
 
-        tango.connect(config);
-
-        // Defining the coordinate frame pairs we are interested in.
-        ArrayList<TangoCoordinateFramePair> framePairs = new ArrayList<TangoCoordinateFramePair>();
-        framePairs.add(new TangoCoordinateFramePair(
-            TangoPoseData.COORDINATE_FRAME_START_OF_SERVICE,
-            TangoPoseData.COORDINATE_FRAME_DEVICE));
-
-        tango.connectListener(framePairs, new OnTangoUpdateListener() {
+    @NonNull
+    private OnTangoUpdateListener buildTangoUpdateListener() {
+        return new OnTangoUpdateListener() {
             @Override
             public void onPoseAvailable(TangoPoseData pose) {
                 // We could process pose data here, but we are not
@@ -180,25 +235,7 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
                 // Information about events that occur in the Tango system.
                 // Allows you to monitor the health of services at runtime.
             }
-        });
-
-        tangoCameraIntrinsics = tango.getCameraIntrinsics(TangoCameraIntrinsics.TANGO_CAMERA_COLOR);
-    }
-
-    /**
-     * Log the Position and Orientation of the given pose in the Logcat as information.
-     *
-     * @param pose the pose to log.
-     */
-    private void logPose(TangoPoseData pose) {
-        StringBuilder stringBuilder = new StringBuilder();
-        float translation[] = pose.getTranslationAsFloats();
-        float orientation[] = pose.getRotationAsFloats();
-
-        stringBuilder.append(String.format("[%+3.3f,%+3.3f,%+3.3f]\n",translation[0],translation[1],translation[2]));
-        stringBuilder.append(String.format("(%+3.3f,%+3.3f,%+3.3f,%+3.3f)",orientation[0],orientation[1],orientation[2],orientation[3]));
-
-        log.call(stringBuilder.toString());
+        };
     }
 
     /**
@@ -214,6 +251,7 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
                 // onRender callbacks had a chance to run and before scene objects are rendered
                 // into the scene.
 
+                // TODO: Check, but very likely Tango thread.
                 synchronized (ControlRoomActivity.this) {
                     // Don't execute any tango API actions if we're not connected to the service
                     if (!isConnected) {
@@ -229,8 +267,7 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
                     // NOTE: When the OpenGL context is recycled, Rajawali may re-generate the
                     // texture with a different ID.
                     if (connectedTextureIdGlThread != renderer.getTextureId()) {
-                        tango.connectTextureId(TangoCameraIntrinsics.TANGO_CAMERA_COLOR,
-                            renderer.getTextureId());
+                        tango.connectTextureId(TangoCameraIntrinsics.TANGO_CAMERA_COLOR, renderer.getTextureId());
                         connectedTextureIdGlThread = renderer.getTextureId();
                         Log.d(TAG, "connected to texture id: " + renderer.getTextureId());
                     }
@@ -278,45 +315,6 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
         });
     }
 
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
-
-            // Calculate click location in u,v (0;1) coordinates.
-            float u = motionEvent.getX() / view.getWidth();
-            float v = motionEvent.getY() / view.getHeight();
-
-            try {
-                // Fit a plane on the clicked point using the latest point cloud data
-                // Synchronize against concurrent access to the RGB timestamp
-                // in the OpenGL thread and a possible service disconnection
-                // due to an onPause event.
-                float[] planeFitTransform;
-                synchronized (this) {
-                    planeFitTransform = doFitPlane(u, v, rgbTimestampGlThread);
-                }
-
-                if (planeFitTransform != null) {
-                    // Update the position of the rendered cube to the pose of the detected plane
-                    // This update is made thread safe by the renderer
-                    renderer.updateObjectPose(planeFitTransform);
-                }
-
-            } catch (TangoException t) {
-                Toast.makeText(getApplicationContext(),
-                    R.string.failed_measurement,
-                    Toast.LENGTH_SHORT).show();
-                Log.e(TAG, getString(R.string.failed_measurement), t);
-            } catch (SecurityException t) {
-                Toast.makeText(getApplicationContext(),
-                    R.string.failed_permissions,
-                    Toast.LENGTH_SHORT).show();
-                Log.e(TAG, getString(R.string.failed_permissions), t);
-            }
-        }
-        return true;
-    }
-
     /**
      * Use the TangoSupport library with point cloud data to calculate the plane
      * of the world feature pointed at the location the camera is looking.
@@ -352,7 +350,7 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
                 TANGO_SUPPORT_ENGINE_TANGO);
 
         if (transform.statusCode == TangoPoseData.POSE_VALID) {
-            float[] openGlTPlane = calculatePlaneTransform(
+            float[] openGlTPlane = TangoMath.calculatePlaneTransform(
                 intersectionPointPlaneModelPair.intersectionPoint,
                 intersectionPointPlaneModelPair.planeModel, transform.matrix);
 
@@ -364,71 +362,19 @@ public class ControlRoomActivity extends AppCompatActivity implements View.OnTou
     }
 
     /**
-     * Calculate the pose of the plane based on the position and normal orientation of the plane
-     * and align it with gravity.
+     * Log the Position and Orientation of the given pose in the Logcat as information.
+     *
+     * @param pose the pose to log.
      */
-    private float[] calculatePlaneTransform(double[] point, double normal[],
-                                            float[] openGlTdepth) {
-        // Vector aligned to gravity.
-        float[] openGlUp = new float[]{0, 1, 0, 0};
-        float[] depthTOpenGl = new float[16];
-        Matrix.invertM(depthTOpenGl, 0, openGlTdepth, 0);
-        float[] depthUp = new float[4];
-        Matrix.multiplyMV(depthUp, 0, depthTOpenGl, 0, openGlUp, 0);
-        // Create the plane matrix transform in depth frame from a point, the plane normal and the
-        // up vector.
-        float[] depthTplane = matrixFromPointNormalUp(point, normal, depthUp);
-        float[] openGlTplane = new float[16];
-        Matrix.multiplyMM(openGlTplane, 0, openGlTdepth, 0, depthTplane, 0);
-        return openGlTplane;
-    }
+    @SuppressLint("DefaultLocale")
+    private void logPose(TangoPoseData pose) {
+        StringBuilder stringBuilder = new StringBuilder();
+        float translation[] = pose.getTranslationAsFloats();
+        float orientation[] = pose.getRotationAsFloats();
 
-    /**
-     * Calculates a transformation matrix based on a point, a normal and the up gravity vector.
-     * The coordinate frame of the target transformation will be Z forward, X left, Y up.
-     */
-    private float[] matrixFromPointNormalUp(double[] point, double[] normal, float[] up) {
-        float[] zAxis = new float[]{(float) normal[0], (float) normal[1], (float) normal[2]};
-        normalize(zAxis);
-        float[] xAxis = crossProduct(zAxis, up);
-        normalize(xAxis);
-        float[] yAxis = crossProduct(zAxis, xAxis);
-        normalize(yAxis);
-        float[] m = new float[16];
-        Matrix.setIdentityM(m, 0);
-        m[0] = xAxis[0];
-        m[1] = xAxis[1];
-        m[2] = xAxis[2];
-        m[4] = yAxis[0];
-        m[5] = yAxis[1];
-        m[6] = yAxis[2];
-        m[8] = zAxis[0];
-        m[9] = zAxis[1];
-        m[10] = zAxis[2];
-        m[12] = (float) point[0];
-        m[13] = (float) point[1];
-        m[14] = (float) point[2];
-        return m;
-    }
+        stringBuilder.append(String.format("[%+3.3f,%+3.3f,%+3.3f]\n",translation[0],translation[1],translation[2]));
+        stringBuilder.append(String.format("(%+3.3f,%+3.3f,%+3.3f,%+3.3f)",orientation[0],orientation[1],orientation[2],orientation[3]));
 
-    /**
-     * Normalize a vector.
-     */
-    private void normalize(float[] v) {
-        double norm = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
-        v[0] /= norm;
-        v[1] /= norm;
-        v[2] /= norm;
-    }
-
-    /**
-     * Cross product between two vectors following the right hand rule.
-     */
-    private float[] crossProduct(float[] v1, float[] v2) {
-        float[] result = new float[3];
-        result[0] = v1[1] * v2[2] - v2[1] * v1[2];
-        result[1] = v1[2] * v2[0] - v2[2] * v1[0];
-        result[2] = v1[0] * v2[1] - v2[0] * v1[1];
-        return result;
+        log.onNext(stringBuilder.toString());
     }
 }

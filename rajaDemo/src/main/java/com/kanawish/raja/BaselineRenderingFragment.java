@@ -72,28 +72,5 @@ public abstract class BaselineRenderingFragment extends Fragment implements IDis
             layout.removeView((View) surface);
     }
 
-    protected static abstract class BaselineRenderer extends Renderer {
-
-        final BaselineRenderingFragment exampleFragment;
-
-        public BaselineRenderer(Context context, @Nullable BaselineRenderingFragment fragment) {
-            super(context);
-            exampleFragment = fragment;
-        }
-
-        @Override
-        public void onRenderSurfaceCreated(EGLConfig config, GL10 gl, int width, int height) {
-            super.onRenderSurfaceCreated(config, gl, width, height);
-        }
-
-        @Override
-        public void onOffsetsChanged(float xOffset, float yOffset, float xOffsetStep, float yOffsetStep, int xPixelOffset, int yPixelOffset) {
-        }
-
-        @Override
-        public void onTouchEvent(MotionEvent event) {
-        }
-
-    }
 
 }
