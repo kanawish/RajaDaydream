@@ -31,20 +31,20 @@ android {
 }
 
 dependencies {
-    compile project(':gvrLibs:audio')
-    compile project(':gvrLibs:base')
-    compile project(':gvrLibs:common')
+    compile 'com.google.vr:sdk-audio:1.10.0'
+    compile 'com.google.vr:sdk-base:1.10.0'
+    compile 'com.google.vr:sdk-common:1.10.0'
 
     compile project(':commonLib')
 
     // APT/Plugin based goodness
-    annotationProcessor "com.github.stephanenicolas.toothpick:toothpick-compiler:1.0.1" // https://github.com/stephanenicolas/toothpick/blob/master/CHANGELOG.md
-    compile "com.github.stephanenicolas.toothpick:toothpick-runtime:1.0.1"
-    compile "com.github.stephanenicolas.toothpick:smoothie:1.0.1"
+    annotationProcessor "com.github.stephanenicolas.toothpick:toothpick-compiler:1.0.3" // https://github.com/stephanenicolas/toothpick/blob/master/CHANGELOG.md
+    compile "com.github.stephanenicolas.toothpick:toothpick-runtime:1.0.3"
+    compile "com.github.stephanenicolas.toothpick:smoothie:1.0.3"
 
-    // Latest version of Rajawali
+    // SNAPSHOT versions of Rajawali can be used in some cases
     // see https://github.com/Rajawali/Rajawali
     // and https://travis-ci.org/Rajawali/Rajawali/builds
-    compile 'org.rajawali3d:rajawali:1.1.517-SNAPSHOT@aar'
+    compile 'org.rajawali3d:rajawali:1.1.777'
 
 }

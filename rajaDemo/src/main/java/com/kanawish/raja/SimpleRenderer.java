@@ -40,8 +40,8 @@ class SimpleRenderer extends BaselineRenderer {
             }
 
             // Lights,
-            DirectionalLight key = new DirectionalLight(0,0.1,0.2);
-            key.setPosition(0.0,10.0,2.5);
+            DirectionalLight key = new DirectionalLight(0,0,0);
+            key.setPosition(0.0,10.0,0.1);
             key.enableLookAt();
             key.setPower(2);
             getCurrentScene().addLight(key);

@@ -1,12 +1,9 @@
 package com.kanawish.raja;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -14,12 +11,8 @@ import android.widget.FrameLayout;
 import com.kanawish.raja.rajademo.R;
 
 import org.rajawali3d.renderer.ISurfaceRenderer;
-import org.rajawali3d.renderer.Renderer;
 import org.rajawali3d.view.IDisplay;
 import org.rajawali3d.view.ISurface;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
 
 public abstract class BaselineRenderingFragment extends Fragment implements IDisplay, View.OnClickListener {
 

@@ -44,5 +44,5 @@ dependencies {
     // Latest version of Rajawali
     // see https://github.com/Rajawali/Rajawali
     // and https://travis-ci.org/Rajawali/Rajawali/builds
-    compile 'org.rajawali3d:rajawali:1.1.517-SNAPSHOT@aar'
+    compile 'org.rajawali3d:rajawali:1.1.777'
 }

@@ -31,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 import javax.microedition.khronos.egl.EGLConfig;
 
 import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.Subject;
 import timber.log.Timber;
 
 /**
@@ -94,8 +93,9 @@ public abstract class RajaStereoRenderer extends Renderer implements GvrView.Ste
     public void onNewFrame(HeadTransform headTransform) {
         float[] headView = headTransform.getHeadView();
         headTransforms.onNext(headView);
-
+        // Copies values from headTransform into this.headView.
         headTransform.getHeadView(this.headView, 0);
+        // Then into this.headViewMatrix
         headViewMatrix.setAll(this.headView);
     }
 
@@ -109,7 +109,7 @@ public abstract class RajaStereoRenderer extends Renderer implements GvrView.Ste
                 eye.getFov().getTop());
         currentEyeMatrix.setAll(eye.getEyeView());
         currentEyeOrientation.fromMatrix(currentEyeMatrix);
-        getCurrentCamera().setOrientation(currentEyeOrientation);
+        getCurrentCamera().setOrientation(currentEyeOrientation.invertAndCreate());
         getCurrentCamera().setPosition(cameraPosition);
         getCurrentCamera().getPosition().add(currentEyeMatrix.getTranslation().inverse());
         super.onRenderFrame(null);
@@ -143,7 +143,7 @@ public abstract class RajaStereoRenderer extends Renderer implements GvrView.Ste
         headViewQuaternion.fromMatrix(headViewMatrix);
         headViewQuaternion.inverse();
         forwardVec.setAll(0, 0, 1);
-        forwardVec.transform(headViewQuaternion);
+        forwardVec.rotateBy(headViewQuaternion);
 
         headTranslation.setAll(headViewMatrix.getTranslation());
         headTranslation.subtract(target.getPosition());

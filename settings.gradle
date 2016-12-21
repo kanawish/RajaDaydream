@@ -1,12 +1,3 @@
-// Explicitly load all the libraries and samples using their full path.
-include ':gvrLibs:audio'
-include ':gvrLibs:base'
-include ':gvrLibs:common'
-include ':gvrLibs:commonwidget'
-include ':gvrLibs:controller'
-include ':gvrLibs:panowidget'
-include ':gvrLibs:videowidget'
-
 include ':commonLib'
 include ':rajaTangoLib'
 include ':tangoRoomEditor'

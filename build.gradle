@@ -19,6 +19,7 @@ buildscript {
 allprojects {
     repositories {
         mavenLocal()
+        maven { url "http://google.bintray.com/googlevr" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
         mavenCentral()
