@@ -27,7 +27,7 @@
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name">
         <activity
-                android:name="com.kanawish.raja.vr.RajaVrDemoActivity"
+                android:name="com.kanawish.raja.vr.RajaVrDemoActivity0"
                 android:label="@string/app_name"
                 android:screenOrientation="landscape"
                 android:configChanges="orientation|keyboardHidden|screenSize" >

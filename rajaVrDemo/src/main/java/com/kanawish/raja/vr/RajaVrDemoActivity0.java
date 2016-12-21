@@ -29,9 +29,9 @@ import org.rajawali3d.vr.surface.RajaVrView;
 /**
  * Raja/Cardboard VR sample application.
  */
-public class RajaVrDemoActivity extends GvrActivity {
+public class RajaVrDemoActivity0 extends GvrActivity {
 
-    private static final String TAG = "RajaVrDemoActivity";
+    private static final String TAG = "RajaVrDemoActivity0";
 
     private GvrAudioEngine gvrAudioEngine;
     private Vibrator vibrator;
@@ -55,7 +55,7 @@ public class RajaVrDemoActivity extends GvrActivity {
         gvrView.setEGLConfigChooser(8, 8, 8, 8, 16, 8);
 
         // NOTE: If you build your own renderer, simply switch them in here.
-        gvrView.setRenderer(new SimpleVrRenderer(this));
+        gvrView.setRenderer(new SimpleVrRenderer0(this));
 
         gvrView.setTransitionViewEnabled(true);
         gvrView.setOnCardboardBackButtonListener(() -> vibrator.vibrate(50));
