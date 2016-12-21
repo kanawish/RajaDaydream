@@ -14,9 +14,9 @@ import org.rajawali3d.math.vector.Vector3;
 import org.rajawali3d.primitives.Cube;
 import org.rajawali3d.vr.renderer.RajaStereoRenderer;
 
-class SimpleVrRenderer0 extends RajaStereoRenderer {
+class SimpleVrRenderer extends RajaStereoRenderer {
 
-    SimpleVrRenderer0(Context context) {
+    SimpleVrRenderer(Context context) {
         super(context);
     }
 
